@@ -1,6 +1,6 @@
 ﻿namespace ContosoUniversity.Models
 {
-    public enum Grade
+    public enum Grade //From SchoolInitializer 0->A, 1->B, 2->C ...
     {
         A, B, C, D, F
     }
