@@ -8,7 +8,6 @@ using System.Web;
 using System.Web.Mvc;
 using ContosoUniversity.DAL;
 using ContosoUniversity.Models;
-using PagedList;
 
 namespace ContosoUniversity.Controllers
 {
@@ -17,30 +16,12 @@ namespace ContosoUniversity.Controllers
         private SchoolContext db = new SchoolContext();
 
         // GET: Student
-        public ActionResult Index(string sortOrder, string currentFilter, string searchString, int? page)  //$ Initial click-> sortOrder=null; 
+        public ActionResult Index(string sortOrder)  //$ Initial click-> sortOrder=null; 
         {
-            ViewBag.CurrentSort = sortOrder;
             ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
-
-            if (searchString != null)
-            {
-                page = 1;
-            }
-            else
-            {
-                searchString = currentFilter;
-            }
-
-            ViewBag.CurrentFilter = searchString;
-
             var students = from s in db.Students   //$IQueryable object
                            select s;
-            if (!String.IsNullOrEmpty(searchString))
-            {
-                students = students.Where(s => s.LastName.Contains(searchString)
-                                       || s.FirstMidName.Contains(searchString));
-            }
             switch (sortOrder)
             {
                 case "name_desc":
@@ -56,11 +37,7 @@ namespace ContosoUniversity.Controllers
                     students = students.OrderBy(s => s.LastName); //$The students are displayed in ascending order by LastName
                     break;
             }
-
-            int pageSize = 3;
-            int pageNumber = (page ?? 1); //$Returns the value of page if it has a value, or return 1 if page is null.
-            return View(students.ToPagedList(pageNumber, pageSize));
-            //return View(students.ToList()); //$The query is not executed until convert the IQueryable object into a collection by calling a method such as ToList
+            return View(students.ToList()); //$The query is not executed until convert the IQueryable object into a collection by calling a method such as ToList
         } 
 
         // GET: Student/Details/5
